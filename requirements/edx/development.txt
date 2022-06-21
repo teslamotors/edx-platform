@@ -58,7 +58,6 @@ asgiref==3.5.2
     # via
     #   -r requirements/edx/testing.txt
     #   django
-    #   uvicorn
 asn1crypto==1.5.1
     # via
     #   -r requirements/edx/testing.txt
@@ -261,7 +260,7 @@ deprecated==1.2.13
     #   -r requirements/edx/testing.txt
     #   jwcrypto
     #   redis
-diff-cover==6.5.0
+diff-cover==6.5.1
     # via -r requirements/edx/testing.txt
 dill==0.3.5.1
     # via
@@ -371,7 +370,7 @@ django-crum==0.7.9
     #   edx-rbac
     #   edx-toggles
     #   super-csv
-django-debug-toolbar==3.4.0
+django-debug-toolbar==3.5.0
     # via -r requirements/edx/development.in
 django-environ==0.9.0
     # via
@@ -428,7 +427,7 @@ django-multi-email-field==0.6.2
     #   edx-enterprise
 django-mysql==4.7.0
     # via -r requirements/edx/testing.txt
-django-oauth-toolkit==1.3.2
+django-oauth-toolkit==1.7.1
     # via
     #   -c requirements/edx/../constraints.txt
     #   -r requirements/edx/testing.txt
@@ -688,7 +687,7 @@ execnet==1.9.0
     #   pytest-xdist
 factory-boy==3.2.1
     # via -r requirements/edx/testing.txt
-faker==13.13.0
+faker==13.14.0
     # via
     #   -r requirements/edx/testing.txt
     #   factory-boy
@@ -727,7 +726,7 @@ future==0.18.2
     #   -r requirements/edx/testing.txt
     #   edx-celeryutils
     #   pyjwkest
-geoip2==4.5.0
+geoip2==4.6.0
     # via -r requirements/edx/testing.txt
 glob2==0.7
     # via -r requirements/edx/testing.txt
@@ -824,6 +823,7 @@ jsonschema==4.6.0
 jwcrypto==1.3.1
     # via
     #   -r requirements/edx/testing.txt
+    #   django-oauth-toolkit
     #   pylti1p3
 kombu==5.2.4
     # via
@@ -936,7 +936,7 @@ mypy==0.961
     # via -r requirements/edx/development.in
 mypy-extensions==0.4.3
     # via mypy
-mysqlclient==2.1.0
+mysqlclient==2.1.1
     # via
     #   -r requirements/edx/testing.txt
     #   blockstore
@@ -956,9 +956,8 @@ numpy==1.22.4
     #   chem
     #   openedx-calc
     #   scipy
-oauthlib==3.0.1
+oauthlib==3.2.0
     # via
-    #   -c requirements/edx/../constraints.txt
     #   -r requirements/edx/testing.txt
     #   django-oauth-toolkit
     #   lti-consumer-xblock
@@ -972,7 +971,7 @@ openedx-filters==0.7.0
     # via
     #   -r requirements/edx/testing.txt
     #   lti-consumer-xblock
-ora2==4.4.0
+ora2==4.4.1
     # via -r requirements/edx/testing.txt
 oscrypto==1.3.0
     # via
@@ -1070,7 +1069,7 @@ pycparser==2.21
     # via
     #   -r requirements/edx/testing.txt
     #   cffi
-pycryptodomex==3.14.1
+pycryptodomex==3.15.0
     # via
     #   -r requirements/edx/testing.txt
     #   edx-proctoring
@@ -1541,7 +1540,7 @@ urllib3==1.26.9
     #   selenium
 user-util==1.0.0
     # via -r requirements/edx/testing.txt
-uvicorn==0.17.6
+uvicorn==0.18.1
     # via
     #   -r requirements/edx/testing.txt
     #   pact-python
