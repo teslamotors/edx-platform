@@ -19,6 +19,7 @@ from django.contrib.auth import get_user_model
 
 from ...data import SpecialExamAttemptData, UserCourseOutlineData
 from .base import OutlineProcessor
+from openedx.core.djangoapps.course_apps.toggles import exams_ida_enabled
 
 User = get_user_model()
 log = logging.getLogger(__name__)
@@ -54,6 +55,15 @@ class SpecialExamsOutlineProcessor(OutlineProcessor):
                         continue
 
                     special_exam_attempt_context = None
+                    # todo: if exam waffle flag enabled, then use exams logic
+                    if exams_ida_enabled(self.course_key):
+                        pass
+                    # todo: use edx-when since it's tied to platform for dates?
+                    # todo: what should be returned?
+                    # todo: "We should update this to just show messages based on the type of exam and
+                    #  its due date when the edx-exams waffle flag is enabled. This is all information the platform
+                    #  already has without needing a call to proctoring/exams."
+                    # todo: else, use proctoring logic
                     try:
                         # Calls into edx_proctoring subsystem to get relevant special exam information.
                         # This will return None, if (user, course_id, content_id) is not applicable.
@@ -72,6 +82,7 @@ class SpecialExamsOutlineProcessor(OutlineProcessor):
 
                     if special_exam_attempt_context:
                         # Return exactly the same format as the edx_proctoring API response
+                        # todo: note that key is usage key and value is dict (special exam attempt context)
                         sequences[sequence.usage_key] = special_exam_attempt_context
 
         return SpecialExamAttemptData(
