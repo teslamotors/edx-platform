@@ -18,6 +18,7 @@ import attr
 import ddt
 import pytest
 
+from openedx.core.djangoapps.course_apps.toggles import EXAMS_IDA
 from openedx.core.djangolib.testing.utils import CacheIsolationTestCase
 from openedx.features.course_experience import COURSE_ENABLE_UNENROLLED_ACCESS_FLAG
 from common.djangoapps.course_modes.models import CourseMode
@@ -1071,6 +1072,15 @@ class SpecialExamsTestCase(OutlineProcessorTestCase):  # lint-amnesty, pylint: d
         # Ensure that no calls are made to get_attempt_status_summary and no data in special_exam_attempts
         assert mock_get_attempt_status_summary.call_count == 0
         assert len(student_details.special_exam_attempts.sequences) == 0
+
+    @override_waffle_flag(EXAMS_IDA, active=True)
+    def test_special_exam_attempt_data_exams_ida_flag_on(self, mock_get_attempt_status_summary):
+        _, student_details, _ = self.get_details(
+            datetime(2020, 5, 25, tzinfo=timezone.utc)
+        )
+
+        # Ensure that no calls are made to get_attempt_status_summary
+        assert mock_get_attempt_status_summary.call_count == 0
 
 
 class VisbilityTestCase(OutlineProcessorTestCase):
