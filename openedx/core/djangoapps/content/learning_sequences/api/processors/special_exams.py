@@ -55,30 +55,32 @@ class SpecialExamsOutlineProcessor(OutlineProcessor):
                         continue
 
                     special_exam_attempt_context = None
-                    # todo: if exam waffle flag enabled, then use exams logic
+                    # if exam waffle flag enabled, then use exams logic
                     if exams_ida_enabled(self.course_key):
-                        pass
+                        # todo: add response
+                        special_exam_attempt_context = None
                     # todo: use edx-when since it's tied to platform for dates?
                     # todo: what should be returned?
                     # todo: "We should update this to just show messages based on the type of exam and
                     #  its due date when the edx-exams waffle flag is enabled. This is all information the platform
                     #  already has without needing a call to proctoring/exams."
-                    # todo: else, use proctoring logic
-                    try:
-                        # Calls into edx_proctoring subsystem to get relevant special exam information.
-                        # This will return None, if (user, course_id, content_id) is not applicable.
-                        special_exam_attempt_context = get_attempt_status_summary(
-                            self.user.id,
-                            str(self.course_key),
-                            str(sequence.usage_key)
-                        )
-                    except ProctoredExamNotFoundException:
-                        log.info(
-                            'No exam found for {sequence_key} in {course_key}'.format(
-                                sequence_key=sequence.usage_key,
-                                course_key=self.course_key
+                    # else, use proctoring logic
+                    else:
+                        try:
+                            # Calls into edx_proctoring subsystem to get relevant special exam information.
+                            # This will return None, if (user, course_id, content_id) is not applicable.
+                            special_exam_attempt_context = get_attempt_status_summary(
+                                self.user.id,
+                                str(self.course_key),
+                                str(sequence.usage_key)
                             )
-                        )
+                        except ProctoredExamNotFoundException:
+                            log.info(
+                                'No exam found for {sequence_key} in {course_key}'.format(
+                                    sequence_key=sequence.usage_key,
+                                    course_key=self.course_key
+                                )
+                            )
 
                     if special_exam_attempt_context:
                         # Return exactly the same format as the edx_proctoring API response
