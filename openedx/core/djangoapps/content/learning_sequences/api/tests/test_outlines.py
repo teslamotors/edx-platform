@@ -1074,6 +1074,8 @@ class SpecialExamsTestCase(OutlineProcessorTestCase):  # lint-amnesty, pylint: d
         assert len(student_details.special_exam_attempts.sequences) == 0
 
     @override_waffle_flag(EXAMS_IDA, active=True)
+    @patch.dict(settings.FEATURES, {'ENABLE_SPECIAL_EXAMS': True})
+    @patch('openedx.core.djangoapps.content.learning_sequences.api.processors.special_exams.get_attempt_status_summary')
     def test_special_exam_attempt_data_exams_ida_flag_on(self, mock_get_attempt_status_summary):
         _, student_details, _ = self.get_details(
             datetime(2020, 5, 25, tzinfo=timezone.utc)
