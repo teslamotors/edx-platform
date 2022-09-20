@@ -58,6 +58,7 @@ class SpecialExamsOutlineProcessor(OutlineProcessor):
                     # if exam waffle flag enabled, then use exams logic
                     if exams_ida_enabled(self.course_key):
                         # todo: add response
+                        print("HELLO")
                         special_exam_attempt_context = None
                     # todo: use edx-when since it's tied to platform for dates?
                     # todo: what should be returned?
@@ -66,6 +67,7 @@ class SpecialExamsOutlineProcessor(OutlineProcessor):
                     #  already has without needing a call to proctoring/exams."
                     # else, use proctoring logic
                     else:
+                        print("GOODBYE")
                         try:
                             # Calls into edx_proctoring subsystem to get relevant special exam information.
                             # This will return None, if (user, course_id, content_id) is not applicable.
