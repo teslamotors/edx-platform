@@ -16,6 +16,8 @@ from edx_proctoring.api import get_attempt_status_summary
 from edx_proctoring.exceptions import ProctoredExamNotFoundException
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
 from ...data import SpecialExamAttemptData, UserCourseOutlineData
 from .base import OutlineProcessor
@@ -55,19 +57,30 @@ class SpecialExamsOutlineProcessor(OutlineProcessor):
                         continue
 
                     special_exam_attempt_context = None
+                    # todo: move logic to helper method
                     # if exam waffle flag enabled, then use exams logic
                     if exams_ida_enabled(self.course_key):
-                        # todo: add response
-                        print("HELLO")
-                        special_exam_attempt_context = None
-                    # todo: use edx-when since it's tied to platform for dates?
-                    # todo: what should be returned?
-                    # todo: "We should update this to just show messages based on the type of exam and
-                    #  its due date when the edx-exams waffle flag is enabled. This is all information the platform
-                    #  already has without needing a call to proctoring/exams."
-                    # else, use proctoring logic
+                        # short description based on exam type
+                        if sequence.exam.is_practice_exam:
+                            exam_type = gettext_noop('Practice Exam')
+                        elif sequence.exam.is_proctored_enabled:
+                            exam_type = gettext_noop('Proctored Exam')
+                        elif sequence.exam.is_time_limited:
+                            exam_type = gettext_noop('Timed Exam')
+                        # todo: probably don't need this default
+                        else:
+                            exam_type = gettext_noop('Exam')
+
+                        summary = {}
+                        summary.update({
+                            'short_description': _(exam_type),
+                            'suggested_icon': 'fa-pencil-square-o'
+                        })
+
+                        special_exam_attempt_context = summary
+                        # todo: use edx-when since it's tied to platform for dates?rned?
+                        # todo: what about due date? where is this coming from?
                     else:
-                        print("GOODBYE")
                         try:
                             # Calls into edx_proctoring subsystem to get relevant special exam information.
                             # This will return None, if (user, course_id, content_id) is not applicable.
