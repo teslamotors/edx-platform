@@ -4,6 +4,7 @@ Search index used to load data into elasticsearch.
 
 
 import logging
+import os
 from functools import wraps
 
 from django.conf import settings
@@ -37,7 +38,7 @@ class CourseTeamIndexer:
     """
     This is the index object for searching and storing CourseTeam model instances.
     """
-    INDEX_NAME = "course_team_index"
+    INDEX_NAME = os.environ['DEPLOYENV'] + "_" + "course_team_index"
     DOCUMENT_TYPE_NAME = "course_team"
     ENABLE_SEARCH_KEY = "ENABLE_TEAMS"
 

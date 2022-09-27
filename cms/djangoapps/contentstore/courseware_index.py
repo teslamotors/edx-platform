@@ -1,6 +1,7 @@
 """ Code to allow module store to interface with courseware index """
 
 import logging
+import os
 import re
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
@@ -340,7 +341,7 @@ class CoursewareSearchIndexer(SearchIndexerBase):
     """
     Class to perform indexing for courseware search from different modulestores
     """
-    INDEX_NAME = "courseware_content"
+    INDEX_NAME = os.environ['DEPLOYENV'] + "_" + "courseware_content"
     ENABLE_INDEXING_KEY = 'ENABLE_COURSEWARE_INDEX'
 
     INDEX_EVENT = {
@@ -446,7 +447,7 @@ class LibrarySearchIndexer(SearchIndexerBase):
     """
     Base class to perform indexing for library search from different modulestores
     """
-    INDEX_NAME = "library_index"
+    INDEX_NAME = os.environ['DEPLOYENV'] + "_" + "library_index"
     ENABLE_INDEXING_KEY = 'ENABLE_LIBRARY_INDEX'
 
     INDEX_EVENT = {
@@ -551,7 +552,7 @@ class CourseAboutSearchIndexer(CoursewareSearchIndexer):
     """
     Class to perform indexing of about information from course object
     """
-    INDEX_NAME = "course_info"
+    INDEX_NAME = os.environ['DEPLOYENV'] + "_" + "course_info"
 
     INDEX_EVENT = {
         'name': 'edx.course_info.index.reindexed',
