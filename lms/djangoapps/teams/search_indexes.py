@@ -37,7 +37,7 @@ class CourseTeamIndexer:
     """
     This is the index object for searching and storing CourseTeam model instances.
     """
-    INDEX_NAME = "course_team_index"
+    INDEX_NAME = getattr(settings, 'ES_INDEX_PREFIX', '') + "course_team_index"
     DOCUMENT_TYPE_NAME = "course_team"
     ENABLE_SEARCH_KEY = "ENABLE_TEAMS"
 
