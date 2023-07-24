@@ -27,7 +27,7 @@ from .signals import GRADING_POLICY_CHANGED
 
 log = logging.getLogger(__name__)
 
-GRADING_POLICY_COUNTDOWN_SECONDS = 3600
+GRADING_POLICY_COUNTDOWN_SECONDS = 25 * 60 # to avoid timing out on rabbitmq
 
 
 def locked(expiry_seconds, key):  # lint-amnesty, pylint: disable=missing-function-docstring
@@ -42,77 +42,6 @@ def locked(expiry_seconds, key):  # lint-amnesty, pylint: disable=missing-functi
                 log.info('Task with key %s already exists in cache', cache_key)
         return wrapper
     return task_decorator
-
-
-@receiver(SignalHandler.course_published)
-def listen_for_course_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
-    """
-    Receives publishing signal and performs publishing related workflows, such as
-    registering proctored exams, building up credit requirements, and performing
-    search indexing
-    """
-
-    # first is to registered exams, the credit subsystem will assume that
-    # all proctored exams have already been registered, so we have to do that first
-    try:
-        register_special_exams(course_key)
-    # pylint: disable=broad-except
-    except Exception as exception:
-        log.exception(exception)
-
-    # then call into the credit subsystem (in /openedx/djangoapps/credit)
-    # to perform any 'on_publish' workflow
-    on_course_publish(course_key)
-
-    # import here, because signal is registered at startup, but items in tasks are not yet able to be loaded
-    from cms.djangoapps.contentstore.tasks import update_outline_from_modulestore_task, update_search_index
-    if key_supports_outlines(course_key):
-        update_outline_from_modulestore_task.delay(str(course_key))
-
-    # Finally call into the course search subsystem
-    # to kick off an indexing action
-    if CoursewareSearchIndexer.indexing_is_enabled() and CourseAboutSearchIndexer.indexing_is_enabled():
-        update_search_index.delay(str(course_key), datetime.now(UTC).isoformat())
-
-
-@receiver(SignalHandler.library_updated)
-def listen_for_library_update(sender, library_key, **kwargs):  # pylint: disable=unused-argument
-    """
-    Receives signal and kicks off celery task to update search index
-    """
-
-    if LibrarySearchIndexer.indexing_is_enabled():
-        # import here, because signal is registered at startup, but items in tasks are not yet able to be loaded
-        from cms.djangoapps.contentstore.tasks import update_library_index
-
-        update_library_index.delay(str(library_key), datetime.now(UTC).isoformat())
-
-
-@receiver(SignalHandler.item_deleted)
-def handle_item_deleted(**kwargs):
-    """
-    Receives the item_deleted signal sent by Studio when an XBlock is removed from
-    the course structure and removes any gating milestone data associated with it or
-    its descendants.
-
-    Arguments:
-        kwargs (dict): Contains the content usage key of the item deleted
-
-    Returns:
-        None
-    """
-
-    usage_key = kwargs.get('usage_key')
-    if usage_key:
-        # Strip branch info
-        usage_key = usage_key.for_branch(None)
-        course_key = usage_key.course_key
-        deleted_module = modulestore().get_item(usage_key)
-        for module in yield_dynamic_descriptor_descendants(deleted_module, kwargs.get('user_id')):
-            # Remove prerequisite milestone data
-            gating_api.remove_prerequisite(module.location)
-            # Remove any 'requires' course content milestone relationships
-            gating_api.set_required_content(course_key, module.location, None, None, None)
 
 
 @receiver(GRADING_POLICY_CHANGED)
